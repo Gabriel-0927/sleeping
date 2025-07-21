@@ -338,7 +338,7 @@
         if(!dayCountEl) return;
         dayCountEl.textContent = dayCount;
         moneyEl.textContent = money; 
-        goodDreamChanceEl.innerHTML = `${baseGoodDreamChance} ${tempGoodDreamChanceBonus > 0 ? `<span style="color:var(--good-color)">(+${tempGoodDreamChanceBonus}%)</span>` : ''}`;
+        goodDreamChanceEl.innerHTML = `${baseGoodDreamChance} ${tempGoodDreamChanceBonus > 0 ? `<span style="color:var(--good-color)">(+${tempGoodDreamChanceBonus})</span>` : ''}`;
         
         bedLevelEl.textContent = bedLevel; pillowLevelEl.textContent = pillowLevel; dreamCatcherLevelEl.textContent = dreamCatcherLevel; incenseLevelEl.textContent = incenseLevel;
         bedUpgradeCostEl.textContent = bedUpgradeCost; pillowUpgradeCostEl.textContent = pillowUpgradeCost; dreamCatcherUpgradeCostEl.textContent = dreamCatcherUpgradeCost; incenseUpgradeCostEl.textContent = incenseUpgradeCost;
@@ -540,23 +540,12 @@
     function showStoryModal(title, text) {
         storyModalActive = true;
         gameContainer.classList.add('frozen');
+        nexusContainer.classList.add('frozen');
         storyModalTitle.textContent = title;
         storyModalText.textContent = text;
         storyModal.classList.remove('hidden');
         logMessage(`<strong>--- ${title} ---</strong><br><i>${text}</i>`);
         updateStatsUI();
-        storyModalCloseButton.onclick = () => {
-            storyModalActive = false;
-            storyModal.classList.add('hidden');
-            gameContainer.classList.remove('frozen');
-            
-            if (currentView === 'nexus') {
-                saveGameAndUpdateUI();
-            } else {
-                saveGameAndUpdateUI();
-                checkPostSleepEvents();
-            }
-        };
     }
 
     function showEnding() { endingActive = true; gameContainer.classList.add('frozen'); endingModal.classList.remove('hidden'); logMessage(`<strong>--- 第一篇章・完 ---</strong>`); saveGame.seenEnding = true; saveGame(); updateStatsUI(); }
@@ -1268,6 +1257,18 @@
         mirrorCloseButton = document.getElementById('mirror-close-button');
         
         mirrorCloseButton.addEventListener('click', closeMirrorModal);
+        
+        storyModalCloseButton.addEventListener('click', () => {
+            storyModalActive = false;
+            storyModal.classList.add('hidden');
+            gameContainer.classList.remove('frozen'); 
+            nexusContainer.classList.remove('frozen');
+
+            saveGameAndUpdateUI();
+
+            if (currentView !== 'nexus') {  
+            }
+        });
 
         function initAudio() {
             const playMusicOnClick = () => {
